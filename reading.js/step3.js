@@ -1,46 +1,46 @@
+
 const fs = require('fs')
 const process =require('process')
 const axios = require('axios')
 
-function cat(path, outPath){
-    fs.readFile(path,'utf-8',(err,data)=>{
+function cat(path,outpath){
+    fs.readFile(path,'utf-8',function(err,data){
         if(err){
-            console.log('Error',err);
-            process.kill(1)
+            console.log(err)
+            process.exit(1)
         }
-        if (outPath) {
-            fs.writeFile(outPath, data, 'utf-8', function(err) {
-                if(err) {
-                    console.error("Could not write to file: " + outPath);
-                    process.exit(1);
+       
+        if(outpath){
+            fs.writeFile(outpath,data,'utf-8',function(e){
+                if(e){
+                    console.log(e)
+                    process.exit(1)
                 }
+                console.log('It worked')
             })
-        } else {
-            console.log('Data:',data)
         }
-        
+        else{
+            console.log(data);
+        }
     })
-  }
-
-function webCat(url, outPath){
-    res = axios.get(url, {}).then(
-        (response) => {
-            if (outPath) {
-                fs.writeFile(outPath, response.data, 'utf-8', function(err) {
-                    if(err) {
-                        console.error("Could not write to file: " + outPath);
-                        process.exit(1);
-                    }
-                })
-            } else {
-                console.log('Data:',response.data)
-            }
+}
+function webCat(url,outpath){
+    response = axios.get(url)
+    response.then((res) =>{
+        if(outpath){
+            fs.writeFile(outpath,res.data,'utf-8',function(e){
+                if(e){
+                    console.log(e)
+                    process.exit(1)
+                }
+                console.log('It worked')
+            })
         }
-    ).catch(function(error) {
-        console.log("Error: " + error);
-        process.exit(1);
-    }
-    )
+    })
+    .catch((error) =>{
+        console.log(error)
+        process.exit(1)
+    })    
 }
 
 let writeToConsole = false;
@@ -56,9 +56,10 @@ if(process.argv.length == 3) {
 }
 
 
+
 // If filePath is local file
 if(filePath.slice(0, 4) == 'http') {
-    webCat(filePath, outPath);
+    webCat(filePath,outPath);
 } else {
-    cat(filePath, outPath);
+    cat(filePath,outPath);
 }
