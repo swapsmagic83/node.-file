@@ -1,13 +1,16 @@
+
+
 const fs = require('fs')
 const process =require('process')
 
 function cat(path){
-    fs.readFile(path,'utf-8',(err,data)=>{
+    fs.readFile(path,'utf-8',function(err,data){
         if(err){
-            console.log('Error',err);
-            process.kill(1)
+            console.log(err)
+            process.exit(1)
         }
-        console.log('Data:',data)
+        console.log(data);
     })
-  }
-  cat(process.argv[2]);
+}
+
+cat(process.argv[2])
